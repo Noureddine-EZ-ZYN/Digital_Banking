@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: E-BANK
+    ports:
+      - "3307:3306"
+
+  backend:
+    build: .
+    container_name: ebanking-backend
+    restart: always
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/E-BANK?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
